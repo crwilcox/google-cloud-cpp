@@ -452,7 +452,7 @@ class GcsBucket(object):
         :rtype: dict
         """
         self.check_preconditions(request)
-        current_etag = base64.b64encode(str(self.iam_version).encode())
+        current_etag = base64.b64encode(str(self.iam_version).encode()).decode()
         if (request.headers.get('if-match') is not None
                 and current_etag != request.headers.get('if-match')):
             raise error_response.ErrorResponse(
