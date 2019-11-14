@@ -45,6 +45,7 @@ class GcsObjectVersion(object):
         now = time.gmtime(time.time())
         timestamp = time.strftime('%Y-%m-%dT%H:%M:%SZ', now)
         if type(media) is not bytes:
+            #raise Exception()
             media = media.encode('utf-8')
         self.media = media
 
@@ -65,8 +66,8 @@ class GcsObjectVersion(object):
                 'entity': 'project-owners-123456789',
                 'entityId': '',
             },
-            'md5Hash': base64.b64encode(hashlib.md5(self.media.decode().encode('utf-8')).digest()),
-            'crc32c': base64.b64encode(struct.pack('>I', crc32c.crc32(self.media)))
+            'md5Hash': base64.b64encode(hashlib.md5(self.media).digest()).decode(),
+            'crc32c': base64.b64encode(struct.pack('>I', crc32c.crc32(self.media))).decode()
         }
         if request.headers.get('content-type') is not None:
             self.metadata['contentType'] = request.headers.get('content-type')
@@ -126,7 +127,7 @@ class GcsObjectVersion(object):
     def _validate_md5_hash(self):
         """Validate the md5Hash field against the stored media."""
         actual = self.metadata.get('md5Hash', '')
-        expected = base64.b64encode(hashlib.md5(self.media.decode().encode('utf-8')).digest())
+        expected = base64.b64encode(hashlib.md5(self.media).digest()).decode()
         if actual != expected:
             raise error_response.ErrorResponse(
                 'Mismatched MD5 hash expected=%s, actual=%s' % (expected,
@@ -135,7 +136,7 @@ class GcsObjectVersion(object):
     def _validate_crc32c(self):
         """Validate the crc32c field against the stored media."""
         actual = self.metadata.get('crc32c', '')
-        expected = base64.b64encode(struct.pack('>I', crc32c.crc32(self.media)))
+        expected = base64.b64encode(struct.pack('>I', crc32c.crc32(self.media))).decode()
         if actual != expected:
             raise error_response.ErrorResponse(
                 'Mismatched CRC32C checksum expected=%s, actual=%s' % (expected,
@@ -330,7 +331,7 @@ class GcsObjectVersion(object):
         """Return the value for the x-goog-hash header."""
         hashes = {'md5': self.metadata.get('md5Hash', ''),
                   'crc32c': self.metadata.get('crc32c', '')}
-        hashes = ['%s=%s' % (key, val) for key, val in hashes.iteritems() if val]
+        hashes = ['%s=%s' % (key, val) for key, val in hashes.items() if val]
         return ','.join(hashes)
 
 

@@ -570,7 +570,7 @@ class GcsBucket(object):
             'next_byte': 0,
             'expected_bytes': expected_bytes,
             'object_name': metadata.get('name'),
-            'media': '',
+            'media': b'',
             'done': False,
         }
         # Capture the preconditions, including those that are None.
@@ -648,8 +648,8 @@ class GcsBucket(object):
                         'Mismatched data range (%d) vs. content-length (%d)' % (
                             end - begin + 1, len(request.data)), status_code=400)
 
-        upload['media'] = upload.get('media', '') + request.data.decode()
-        next_byte = len(upload.get('media', ''))
+        upload['media'] = upload.get('media', b'') + request.data
+        next_byte = len(upload.get('media', b''))
         upload['next_byte'] = next_byte
         response_payload = ''
         if final_chunk and next_byte >= total:

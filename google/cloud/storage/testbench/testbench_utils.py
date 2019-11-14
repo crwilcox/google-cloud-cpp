@@ -259,10 +259,10 @@ def corrupt_media(media):
     """
     # Deal with the boundary condition.
     if not media:
-        return str(random.sample("abcdefghijklmnopqrstuvwxyz", 1))
-    if media[0] == 'A':
-        return 'B' + media[1:]
-    return 'A' + media[1:]
+        return bytes(random.sample(b"abcdefghijklmnopqrstuvwxyz", 1))
+    if media[0] == b'A':
+        return b'B' + media[1:]
+    return b'A' + media[1:]
 
 
 # Define the collection of Buckets indexed by <bucket_name>
