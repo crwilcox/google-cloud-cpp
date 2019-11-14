@@ -44,11 +44,7 @@ class GcsObjectVersion(object):
         self.object_id = bucket_name + '/o/' + name + '/' + str(generation)
         now = time.gmtime(time.time())
         timestamp = time.strftime('%Y-%m-%dT%H:%M:%SZ', now)
-        if type(media) is not bytes:
-            #raise Exception()
-            media = media.encode('utf-8')
         self.media = media
-
         instructions = request.headers.get('x-goog-testbench-instructions')
         if instructions == 'inject-upload-data-error':
             self.media = testbench_utils.corrupt_media(media)
@@ -592,7 +588,7 @@ class GcsObject(object):
             key, value = header_line.split(b': ', 2)
             # This does not work for repeated headers, but we do not expect
             # those in the testbench.
-            headers[key] = value #.encode('ascii', 'ignore')] = value
+            headers[key] = value
             index = next_line + 2
             next_line = multipart_upload_part.find(b'\r\n', index)
         return headers, multipart_upload_part[next_line + 2:]

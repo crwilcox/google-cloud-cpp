@@ -29,9 +29,6 @@ class GcsBucket(object):
 
     def __init__(self, gcs_url, name):
         self.name = name
-        if type(self.name) is bytes:
-            self.name = self.name.decode()
-        
         self.gcs_url = gcs_url
         self.metadata = {
             'metageneration': 0,
@@ -598,7 +595,6 @@ class GcsBucket(object):
                 'Missing upload_id in resumable_upload_chunk', status_code=400)
         upload = self.resumable_uploads.get(upload_id)
         if upload is None:
-            import pdb; pdb.set_trace()
             raise error_response.ErrorResponse(
                 'Cannot find resumable upload %s' % upload_id, status_code=404)
         # Be gracious in what you accept, if the Content-Range header is not
